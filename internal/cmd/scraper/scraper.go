@@ -29,6 +29,8 @@ type Config struct {
 	Verbose                           bool                         `mapstructure:"verbose"`
 	Audit                             bool                         `mapstructure:"audit"`
 	Emitters                          []string                     `mapstructure:"emitters"`
+	ScrapeDirectories                 []string                     `mapstructure:"scrape_directories"`
+	ScrapeDirectoriesRefreshPeriod    time.Duration                `mapstructure:"scrape_directories_refesh_period"`
 	ScrapeEnabledLabel                string                       `mapstructure:"scrape_enabled_label"`
 	RequireScrapeEnabledLabelForNodes bool                         `mapstructure:"require_scrape_enabled_label_for_nodes"`
 	ScrapeTimeout                     time.Duration                `mapstructure:"scrape_timeout"`
@@ -125,6 +127,14 @@ func RunWithEmitters(cfg *Config, emitters []integration.Emitter) error {
 		return fmt.Errorf("while parsing provided endpoints: %w", err)
 	}
 	retrievers = append(retrievers, fixedRetriever)
+
+	if len(cfg.ScrapeDirectories) > 0 {
+		fsRetriever, err := endpoints.FileSystemRetriever(cfg.ScrapeDirectories, cfg.ScrapeDirectoriesRefreshPeriod)
+		if err != nil {
+			return fmt.Errorf("while parsing scraper targets from the filesystem: %w", err)
+		}
+		retrievers = append(retrievers, fsRetriever)
+	}
 
 	if !cfg.DisableAutodiscovery {
 		kubernetesRetriever, err := endpoints.NewKubernetesTargetRetriever(cfg.ScrapeEnabledLabel, cfg.RequireScrapeEnabledLabelForNodes, cfg.ScrapeServices, cfg.ScrapeEndpoints, endpoints.WithInClusterConfig())
