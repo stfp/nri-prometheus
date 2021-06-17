@@ -42,11 +42,11 @@ func (t *Target) Metadata() labels.Set {
 	if t.metadata == nil {
 		metadata := labels.Set{}
 		if targetURL := redactedURLString(&t.URL); targetURL != "" {
-			metadata["scrapedTargetURL"] = targetURL
+			//metadata["scrapedTargetURL"] = targetURL
 		}
 		if t.Object.Name != "" {
-			metadata["scrapedTargetName"] = t.Object.Name
-			metadata["scrapedTargetKind"] = t.Object.Kind
+			//metadata["scrapedTargetName"] = t.Object.Name
+			//metadata["scrapedTargetKind"] = t.Object.Kind
 		}
 		labels.Accumulate(metadata, t.Object.Labels)
 

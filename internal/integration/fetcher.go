@@ -361,7 +361,7 @@ func convertPromMetrics(log *logrus.Entry, targetName string, mfs prometheus.Met
 				continue
 			}
 			attrs := map[string]interface{}{}
-			attrs["targetName"] = targetName
+			//attrs["targetName"] = targetName
 			for _, l := range m.GetLabel() {
 				attrs[l.GetName()] = l.GetValue()
 			}
