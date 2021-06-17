@@ -48,6 +48,7 @@ type Config struct {
 	BearerTokenFile                   string                       `mapstructure:"bearer_token_file"`
 	InsecureSkipVerify                bool                         `mapstructure:"insecure_skip_verify" default:"false"`
 	ProcessingRules                   []integration.ProcessingRule `mapstructure:"transformations"`
+	SkipDefaultProcessingRules        bool                         `mapstructure:"skip_default_transformations"`
 	DecorateFile                      bool
 	EmitterProxy                      string `mapstructure:"emitter_proxy"`
 	// Parsed version of `EmitterProxy`
@@ -165,7 +166,11 @@ func RunWithEmitters(cfg *Config, emitters []integration.Emitter) error {
 			},
 		},
 	}
-	processingRules := append(cfg.ProcessingRules, defaultTransformations)
+
+	processingRules := cfg.ProcessingRules
+	if !cfg.SkipDefaultProcessingRules {
+		processingRules = append(processingRules, defaultTransformations)
+	}
 
 	scrapeDuration, err := time.ParseDuration(cfg.ScrapeDuration)
 	if err != nil {
@@ -221,7 +226,11 @@ func RunOnceWithEmitters(cfg *Config, emitters []integration.Emitter) error {
 			},
 		},
 	}
-	processingRules := append(cfg.ProcessingRules, defaultTransformations)
+
+	processingRules := cfg.ProcessingRules
+	if !cfg.SkipDefaultProcessingRules {
+		processingRules = append(cfg.ProcessingRules, defaultTransformations)
+	}
 
 	scrapeDuration, err := time.ParseDuration(cfg.ScrapeDuration)
 	if err != nil {
