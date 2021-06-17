@@ -73,7 +73,7 @@ func newDefaultRoundTripper(tlsConfig *tls.Config) http.RoundTripper {
 		MaxIdleConns:        20000,
 		MaxIdleConnsPerHost: 1000, // see https://github.com/golang/go/issues/13801
 		DisableKeepAlives:   false,
-		DisableCompression:  true,
+		DisableCompression:  false,
 		// 5 minutes is typically above the maximum sane scrape interval. So we can
 		// use keepalive for all configurations.
 		IdleConnTimeout: 5 * time.Minute,
